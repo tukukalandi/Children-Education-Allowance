@@ -10,6 +10,7 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const nextSlide = () => {
@@ -36,9 +37,17 @@ export default function App() {
     }
   };
 
+  const togglePresentationMode = () => {
+    setIsPresentationMode(!isPresentationMode);
+  };
+
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
+      // Automatically enter presentation mode when entering fullscreen
+      if (document.fullscreenElement) {
+        setIsPresentationMode(true);
+      }
     };
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
@@ -50,10 +59,14 @@ export default function App() {
       if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
       if (e.key === 'ArrowLeft') prevSlide();
       if (e.key === 'f') toggleFullscreen();
+      if (e.key === 'p') togglePresentationMode();
+      if (e.key === 'Escape' && isPresentationMode && !isFullscreen) {
+        setIsPresentationMode(false);
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex]);
+  }, [currentIndex, isPresentationMode, isFullscreen]);
 
   const variants = {
     enter: (direction: number) => ({
@@ -75,45 +88,45 @@ export default function App() {
   return (
     <div ref={containerRef} className="min-h-screen bg-gray-100 flex flex-col font-sans overflow-hidden">
       {/* Header */}
-      <header 
-        className="h-20 flex items-center justify-between px-6 shadow-md z-10"
-        style={{ backgroundColor: INDIA_POST_RED }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="bg-white p-1 rounded shadow-sm">
-            {/* Indian National Emblem Placeholder */}
-            <img 
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/800px-Emblem_of_India.svg.png" 
-              alt="National Emblem" 
-              className="h-12 w-auto"
-              referrerPolicy="no-referrer"
-            />
+      {!isPresentationMode && (
+        <header 
+          className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6 shadow-md z-10 shrink-0"
+          style={{ backgroundColor: INDIA_POST_RED }}
+        >
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="bg-white p-1 rounded shadow-sm">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/800px-Emblem_of_India.svg.png" 
+                alt="National Emblem" 
+                className="h-8 sm:h-12 w-auto"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="text-white">
+              <h1 className="text-sm sm:text-lg font-bold leading-tight">DEPARTMENT OF POSTS</h1>
+              <p className="text-[10px] sm:text-xs opacity-90">Government of India</p>
+            </div>
           </div>
-          <div className="text-white">
-            <h1 className="text-lg font-bold leading-tight">DEPARTMENT OF POSTS</h1>
-            <p className="text-xs opacity-90">Government of India</p>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right hidden sm:block">
-            <h2 className="text-white font-bold text-sm">भारतीय डाक</h2>
-            <p className="text-white text-xs opacity-90">India Post</p>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="text-right hidden sm:block">
+              <h2 className="text-white font-bold text-sm">भारतीय डाक</h2>
+              <p className="text-white text-xs opacity-90">India Post</p>
+            </div>
+            <div className="bg-white p-1 rounded shadow-sm">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/b/be/India-post-logo.jpg" 
+                alt="India Post Logo" 
+                className="h-8 sm:h-12 w-auto"
+                referrerPolicy="no-referrer"
+              />
+            </div>
           </div>
-          <div className="bg-white p-1 rounded shadow-sm">
-            {/* India Post Logo */}
-            <img 
-              src="https://upload.wikimedia.org/wikipedia/commons/b/be/India-post-logo.jpg" 
-              alt="India Post Logo" 
-              className="h-12 w-auto"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Main Slide Area */}
-      <main className="flex-1 relative flex items-center justify-center p-4 sm:p-8">
+      <main className="flex-1 relative flex items-center justify-center p-2 sm:p-8 overflow-hidden">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={currentIndex}
@@ -126,41 +139,41 @@ export default function App() {
               x: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 }
             }}
-            className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
+            className="absolute inset-0 flex items-center justify-center p-2 sm:p-8"
           >
-            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-5xl w-full aspect-video flex flex-col sm:flex-row border-t-8" style={{ borderColor: INDIA_POST_YELLOW }}>
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl overflow-hidden max-w-5xl w-full h-full sm:h-auto sm:aspect-video flex flex-col md:flex-row border-t-4 sm:border-t-8" style={{ borderColor: INDIA_POST_YELLOW }}>
               {/* Left Content Side */}
-              <div className="flex-1 p-8 flex flex-col justify-center bg-gradient-to-br from-white to-gray-50">
-                <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-700 text-xs font-bold uppercase tracking-wider">
+              <div className="flex-1 p-4 sm:p-8 flex flex-col justify-center bg-gradient-to-br from-white to-gray-50 overflow-y-auto">
+                <div className="mb-2 sm:mb-4 inline-flex items-center gap-2 px-2 sm:px-3 py-1 rounded-full bg-red-50 text-red-700 text-[10px] sm:text-xs font-bold uppercase tracking-wider w-fit">
                   <GraduationCap size={14} />
                   CEA Guide 2024-25
                 </div>
-                <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-6 leading-tight">
+                <h2 className="text-xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-3 sm:mb-6 leading-tight">
                   {SLIDES[currentIndex].title}
                 </h2>
-                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-4 sm:mb-8">
                   {SLIDES[currentIndex].description}
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-8">
                   {SLIDES[currentIndex].points?.map((point, i) => (
                     <motion.div 
                       key={i}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.2 + i * 0.1 }}
-                      className="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 p-2 rounded-lg border border-gray-100"
+                      className="flex items-center gap-2 text-[11px] sm:text-sm text-gray-700 bg-gray-50 p-1.5 sm:p-2 rounded-lg border border-gray-100"
                     >
-                      <CheckCircle2 size={16} className="text-green-500 shrink-0" />
+                      <CheckCircle2 size={14} className="text-green-500 shrink-0" />
                       <span className="font-medium">{point}</span>
                     </motion.div>
                   ))}
                 </div>
                 
-                <div className="mt-auto flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                    <FileText size={16} />
-                    <span>Slide {currentIndex + 1} of {SLIDES.length}</span>
+                <div className="mt-auto flex items-center gap-2 sm:gap-4 pt-4 border-t border-gray-100 sm:border-0">
+                  <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm font-medium text-gray-500">
+                    <FileText size={14} />
+                    <span className="whitespace-nowrap">Slide {currentIndex + 1} / {SLIDES.length}</span>
                   </div>
                   <div className="h-1 flex-1 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div 
@@ -174,20 +187,20 @@ export default function App() {
               </div>
 
               {/* Right Image Side */}
-              <div className="flex-1 relative hidden md:block">
+              <div className="h-1/3 md:h-full md:flex-1 relative">
                 <img 
                   src={SLIDES[currentIndex].image} 
                   alt={SLIDES[currentIndex].title}
                   className="absolute inset-0 w-full h-full object-cover"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white/10" />
+                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-transparent to-white/10" />
                 
                 {/* Decorative Elements */}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-white/50" />
-                  <div className="w-3 h-3 rounded-full bg-white/30" />
-                  <div className="w-3 h-3 rounded-full bg-white/10" />
+                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex gap-1 sm:gap-2">
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-white/50" />
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-white/30" />
+                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-white/10" />
                 </div>
               </div>
             </div>
@@ -228,57 +241,66 @@ export default function App() {
       </main>
 
       {/* Footer / Progress Bar */}
-      <footer className="h-20 bg-white border-t flex items-center justify-between px-4 sm:px-8 gap-4 shadow-inner">
-        <button 
-          onClick={prevSlide}
-          disabled={currentIndex === 0}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-black transition-all hover:bg-gray-50 disabled:opacity-20 active:scale-95"
-          style={{ color: INDIA_POST_RED }}
-        >
-          <ChevronLeft size={20} /> PREV
-        </button>
+      {!isPresentationMode && (
+        <footer className="h-16 sm:h-20 bg-white border-t flex items-center justify-between px-4 sm:px-8 gap-4 shadow-inner shrink-0">
+          <button 
+            onClick={prevSlide}
+            disabled={currentIndex === 0}
+            className="flex items-center gap-1 px-2 sm:px-4 py-2 rounded-lg text-[10px] sm:text-sm font-black transition-all hover:bg-gray-50 disabled:opacity-20 active:scale-95"
+            style={{ color: INDIA_POST_RED }}
+          >
+            <ChevronLeft size={16} className="sm:w-5 sm:h-5" /> PREV
+          </button>
 
-        <div className="flex gap-2">
-          {SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                setDirection(idx > currentIndex ? 1 : -1);
-                setCurrentIndex(idx);
-              }}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${
-                idx === currentIndex ? 'w-8' : 'hover:bg-gray-300'
-              }`}
-              style={{ backgroundColor: idx === currentIndex ? INDIA_POST_RED : '#E5E7EB' }}
-            />
-          ))}
-        </div>
+          <div className="flex gap-1 sm:gap-2">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  setDirection(idx > currentIndex ? 1 : -1);
+                  setCurrentIndex(idx);
+                }}
+                className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full transition-all ${
+                  idx === currentIndex ? 'w-4 sm:w-8' : 'hover:bg-gray-300'
+                }`}
+                style={{ backgroundColor: idx === currentIndex ? INDIA_POST_RED : '#E5E7EB' }}
+              />
+            ))}
+          </div>
 
-        <button 
-          onClick={nextSlide}
-          disabled={currentIndex === SLIDES.length - 1}
-          className="flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-black transition-all hover:bg-gray-50 disabled:opacity-20 active:scale-95"
-          style={{ color: INDIA_POST_RED }}
-        >
-          NEXT <ChevronRight size={20} />
-        </button>
-      </footer>
+          <button 
+            onClick={nextSlide}
+            disabled={currentIndex === SLIDES.length - 1}
+            className="flex items-center gap-1 px-2 sm:px-4 py-2 rounded-lg text-[10px] sm:text-sm font-black transition-all hover:bg-gray-50 disabled:opacity-20 active:scale-95"
+            style={{ color: INDIA_POST_RED }}
+          >
+            NEXT <ChevronRight size={16} className="sm:w-5 sm:h-5" />
+          </button>
+        </footer>
+      )}
 
       {/* Quick Info Bar */}
-      <div className="bg-gray-900 text-white py-2 px-4 flex justify-between items-center text-[10px] uppercase tracking-widest font-bold">
-        <div className="flex items-center gap-4">
+      <div className="bg-gray-900 text-white py-1.5 sm:py-2 px-4 flex justify-between items-center text-[8px] sm:text-[10px] uppercase tracking-widest font-bold shrink-0">
+        <div className="flex items-center gap-2 sm:gap-4">
           <span className="flex items-center gap-1"><CheckCircle2 size={10} className="text-green-400" /> Official Guide</span>
-          <span className="flex items-center gap-1"><AlertCircle size={10} className="text-yellow-400" /> Updated 2024</span>
+          <span className="hidden sm:flex items-center gap-1"><AlertCircle size={10} className="text-yellow-400" /> Updated 2024</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <button 
+            onClick={togglePresentationMode}
+            className="hover:text-yellow-400 transition-colors flex items-center gap-1"
+          >
+            <FileText size={12} />
+            {isPresentationMode ? 'Exit PPT (P)' : 'PPT Mode (P)'}
+          </button>
           <button 
             onClick={toggleFullscreen}
             className="hover:text-yellow-400 transition-colors flex items-center gap-1"
           >
             {isFullscreen ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
-            {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (F)'}
+            <span className="hidden sm:inline">{isFullscreen ? 'Exit Fullscreen' : 'Fullscreen (F)'}</span>
           </button>
-          <span>© Department of Posts, India</span>
+          <span className="hidden xs:inline">© India Post</span>
         </div>
       </div>
     </div>
