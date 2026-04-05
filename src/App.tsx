@@ -96,7 +96,7 @@ export default function App() {
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="bg-white p-1 rounded shadow-sm">
               <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/800px-Emblem_of_India.svg.png" 
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b4/Emblem_of_India_with_transparent_background.png" 
                 alt="National Emblem" 
                 className="h-8 sm:h-12 w-auto"
                 referrerPolicy="no-referrer"

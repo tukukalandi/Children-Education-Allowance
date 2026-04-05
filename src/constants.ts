@@ -10,7 +10,7 @@ export const SLIDES = [
     id: 2,
     title: "The 2024 Catalyst: How the 50% DA Threshold Unlocked Higher Rates",
     description: "On January 1, 2024, the 7th Pay Commission's automatic revision mechanism was activated, resulting in a 25% across-the-board increase in education allowances.",
-    image: "https://images.unsplash.com/photo-1454165833767-027ffea9e778?auto=format&fit=crop&q=80&w=1000",
+    image: "https://picsum.photos/seed/growth/1000/600",
     points: ["50% DA Threshold reached", "25% Rate Hike", "CEA & Hostel Subsidy affected"]
   },
   {
@@ -52,7 +52,7 @@ export const SLIDES = [
     id: 8,
     title: "The 50km Radar: Geographic Constraints for Hostel Subsidies",
     description: "To prevent misuse, hostel subsidies are strictly governed by the distance between the employee's residence and the residential educational complex.",
-    image: "https://images.unsplash.com/photo-1523050335102-c32509087440?auto=format&fit=crop&q=80&w=1000",
+    image: "https://picsum.photos/seed/distance/1000/600",
     points: ["Distance > 50 kilometers", "Eligible for ₹8,437.50 Monthly Subsidy"]
   },
   {
